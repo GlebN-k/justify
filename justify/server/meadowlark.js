@@ -1,14 +1,28 @@
 import express from 'express';
-import { engine } from 'express-handlebars'
+import { engine } from 'express-handlebars';
+import path from 'path'
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const app = express()
 const port = process.env.PORT || 3000
+const fortunes = [
+  "Победи свои страхи, или они победят тебя.",
+  "Рекам нужны истоки.",
+  "Не бойся неведомого.",
+  "Тебя ждет приятный сюрприз.",
+  "Будь проще везде, где только можно.",
+]
 
 app.engine('handlebars', engine({
     defaultLayout: 'main',
   }))
 
 app.set('view engine', 'handlebars')
+
+// app.use(express.static(__dirname + '/public'))
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get('/', (req, res) => {
   res.render('home')  
@@ -17,7 +31,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/about', (req, res) => {
-  res.render('about')  
+  const randomFortune = fortunes[Math.floor(Math.random()*fortunes.length)]
+  res.render('about', { fortune: randomFortune })  
   // res.type('text/plain')
     // res.send('About Meadowlark Travel')
 })
